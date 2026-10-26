@@ -11,7 +11,7 @@
   <h2>LINE 訊息工具</h2>
 
   <p>預計傳送的文字：</p>
-  <textarea id="message" rows="4" cols="35">大家好！</textarea>
+  <textarea id="message" rows="4" cols="35">我支持OOO</textarea>
   <br><br>
 
   <button id="send" disabled>初始化中……</button>
@@ -81,9 +81,9 @@
     main().catch(error => {
       console.error(error);
       status.textContent =
+        "錯誤名稱：" + (error.name || "未知") +
         "初始化失敗：" + (error.message || String(error));
     });
   </script>
 </body>
 </html>
-```
