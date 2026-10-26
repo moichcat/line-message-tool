@@ -1,0 +1,89 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LINE 訊息工具</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h2>LINE 訊息工具</h2>
+
+  <p>預計傳送的文字：</p>
+  <textarea id="message" rows="4" cols="35">大家好！</textarea>
+  <br><br>
+
+  <button id="send" disabled>初始化中……</button>
+  <p id="status">正在初始化 LIFF……</p>
+
+  <script>
+    // 建立 LIFF App 後，把自己的 LIFF ID 填在這裡。
+    const LIFF_ID = "請填入你的LIFF_ID";
+
+    const messageBox = document.getElementById("message");
+    const sendButton = document.getElementById("send");
+    const status = document.getElementById("status");
+
+    async function main() {
+      if (LIFF_ID === "請填入你的LIFF_ID") {
+        status.textContent = "請先設定 LIFF ID。";
+        return;
+      }
+
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isInClient()) {
+        status.textContent = "請使用 LINE 開啟此 LIFF 網頁。";
+        return;
+      }
+
+      if (!liff.isApiAvailable("sendMessages")) {
+        status.textContent = "目前環境不支援 sendMessages。";
+        return;
+      }
+
+      sendButton.disabled = false;
+      sendButton.textContent = "傳送訊息";
+      status.textContent = "初始化完成。傳送前請確認文字。";
+    }
+
+    sendButton.addEventListener("click", async () => {
+      const text = messageBox.value;
+
+      if (!text.trim()) {
+        status.textContent = "訊息不可為空白。";
+        return;
+      }
+
+      if (text.length > 5000) {
+        status.textContent = "訊息太長，請縮短後再試。";
+        return;
+      }
+
+      sendButton.disabled = true;
+
+      try {
+        await liff.sendMessages([
+          { type: "text", text }
+        ]);
+
+        status.textContent = "已送出訊息。";
+        liff.closeWindow();
+      } catch (error) {
+        console.error(error);
+        status.textContent =
+          "傳送失敗：" + (error.message || String(error));
+        sendButton.disabled = false;
+      }
+    });
+
+    main().catch(error => {
+      console.error(error);
+      status.textContent =
+        "初始化失敗：" + (error.message || String(error));
+    });
+  </script>
+</body>
+</html>
+```
