@@ -78,12 +78,15 @@
       }
     });
 
-    main().catch(error => {
-      console.error(error);
-      status.textContent =
-        "錯誤名稱：" + (error.name || "未知") +
-        "初始化失敗：" + (error.message || String(error));
-    });
+    main().catch (error) {
+  console.error("LIFF sendMessages error:", error);
+
+  status.textContent =
+    "錯誤名稱：" + (error.name || "未知") +
+    "；錯誤訊息：" + (error.message || String(error));
+
+  button.disabled = false;
+};
   </script>
 </body>
 </html>
