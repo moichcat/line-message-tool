@@ -1,87 +1,193 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LINE 訊息工具</title>
+
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-</head>
-<body>
-  <h2>LINE 訊息工具</h2>
 
-  <p>預計傳送的文字：</p>
-  <textarea id="message" rows="4" cols="35">我支持OOO</textarea>
-  <br><br>
-
-  <button id="send" disabled>初始化中……</button>
-  <p id="status">正在初始化 LIFF……</p>
-
-  <script>
-    // 建立 LIFF App 後，把自己的 LIFF ID 填在這裡。
-    const LIFF_ID = "2012206486-2r09reyF";
-
-    const messageBox = document.getElementById("message");
-    const sendButton = document.getElementById("send");
-    const status = document.getElementById("status");
-
-    async function main() {
-      if (LIFF_ID === "請填入你的LIFF_ID") {
-        status.textContent = "請先設定 LIFF ID。";
-        return;
-      }
-
-      await liff.init({ liffId: LIFF_ID });
-
-      if (!liff.isInClient()) {
-        status.textContent = "請使用 LINE 開啟此 LIFF 網頁。";
-        return;
-      }
-
-      sendButton.disabled = false;
-      sendButton.textContent = "傳送訊息";
-      status.textContent = "初始化完成。傳送前請確認文字。";
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 520px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      background: #f5f7f8;
+      color: #222;
     }
 
-    sendButton.addEventListener("click", async () => {
-      const text = messageBox.value;
+    main {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 3px 15px #00000012;
+    }
 
-      if (!text.trim()) {
-        status.textContent = "訊息不可為空白。";
+    h1 {
+      font-size: 24px;
+    }
+
+    #message {
+      padding: 14px;
+      background: #f0f2f4;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    #status {
+      margin: 16px 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #06c755;
+      color: white;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>LINE 訊息工具</h1>
+
+    <p>即將傳送的訊息：</p>
+    <div id="message"></div>
+
+    <p id="status">正在初始化 LINE LIFF……</p>
+
+    <button id="sendButton" disabled>
+      確認並傳送
+    </button>
+
+    <p class="note">
+      傳送前請確認訊息內容及目前聊天室。
+    </p>
+  </main>
+
+  <script>
+    // ========================
+
+    const LIFF_ID = "2012206486-2r09reyF";
+
+    const MESSAGE = "你好，這是一則測試訊息。";
+
+    // ========================
+
+    const statusElement = document.getElementById("status");
+    const sendButton = document.getElementById("sendButton");
+    const messageElement = document.getElementById("message");
+
+    let initialized = false;
+    let sending = false;
+
+    messageElement.textContent = MESSAGE;
+
+    async function initialize() {
+      try {
+          await liff.init({
+          liffId: LIFF_ID
+        });
+
+        initialized = true;
+
+        if (!liff.isInClient()) {
+          statusElement.textContent =
+            "目前不是在 LINE 內建瀏覽器中開啟。\n" +
+            "請從 LINE 聊天室開啟此 LIFF 連結，再試一次。";
+
+          return;
+        }
+
+        statusElement.textContent =
+          "初始化完成。\n" +
+          "請確認目前聊天室，再按下方按鈕。";
+
+        sendButton.disabled = false;
+
+      } catch (error) {
+        statusElement.textContent =
+          "初始化失敗：\n" +
+          (error.message || String(error));
+
+        console.error(error);
+      }
+    }
+
+    async function sendMessage() {
+      if (!initialized || sending) {
         return;
       }
 
-      if (text.length > 5000) {
-        status.textContent = "訊息太長，請縮短後再試。";
-        return;
-      }
-
+      sending = true;
       sendButton.disabled = true;
 
       try {
+        if (!liff.isInClient()) {
+          throw new Error(
+            "請在 LINE 內建瀏覽器中開啟此頁面。"
+          );
+        }
+
+        const confirmed = window.confirm(
+          "要將以下訊息傳送到目前聊天室嗎？\n\n" +
+          MESSAGE
+        );
+
+        if (!confirmed) {
+          statusElement.textContent = "已取消傳送。";
+          return;
+        }
+
+        statusElement.textContent = "正在傳送……";
+
         await liff.sendMessages([
-          { type: "text", text }
+          {
+            type: "text",
+            text: MESSAGE
+          }
         ]);
 
-        status.textContent = "已送出訊息。";
-        liff.closeWindow();
+        statusElement.textContent =
+          "LINE 已回報傳送成功。";
+
       } catch (error) {
         console.error(error);
-        status.textContent =
-          "傳送失敗：" + (error.message || String(error));
+
+        statusElement.textContent =
+          "傳送失敗：\n" +
+          (error.message || String(error)) +
+          "\n\n請檢查 LIFF 權限、開啟方式及 LINE 執行環境。";
+
+      } finally {
+        sending = false;
         sendButton.disabled = false;
       }
-    });
+    }
 
-    main().catch (error) {
-  console.error("LIFF sendMessages error:", error);
+    sendButton.addEventListener("click", sendMessage);
 
-  status.textContent =
-    "錯誤名稱：" + (error.name || "未知") +
-    "；錯誤訊息：" + (error.message || String(error));
-
-  button.disabled = false;
-};
+    initialize();
   </script>
 </body>
+</html>
 </html>
