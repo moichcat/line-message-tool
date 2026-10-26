@@ -38,11 +38,6 @@
         return;
       }
 
-      if (!liff.isApiAvailable("sendMessages")) {
-        status.textContent = "目前環境不支援 sendMessages。";
-        return;
-      }
-
       sendButton.disabled = false;
       sendButton.textContent = "傳送訊息";
       status.textContent = "初始化完成。傳送前請確認文字。";
