@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LINE</title>
+  <title>LINE 訊息工具</title>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
@@ -68,17 +68,19 @@
 
 <body>
   <main>
-    <h1>LINE</h1>
+    <h1>LINE 訊息工具</h1>
 
     <p>即將傳送的訊息：</p>
     <div id="message"></div>
 
-    <p id="status">正在初始化……</p>
+    <p id="status">正在初始化</p>
 
     <button id="sendButton" disabled>
-      取消傳送
+      確認並傳送
     </button>
 
+    <p class="note">
+      傳送前請確認訊息內容及目前聊天室。
     </p>
   </main>
 
@@ -87,7 +89,7 @@
 
     const LIFF_ID = "2012206486-2r09reyF";
 
-    const MESSAGE = "你好，這是一則測試訊息。";
+    const MESSAGE = "你好，The World";
 
     // ========================
 
@@ -96,7 +98,7 @@
     const messageElement = document.getElementById("message");
 
     let initialized = false;
-    let sending = true;
+    let sending = false;
 
     messageElement.textContent = MESSAGE;
 
@@ -110,15 +112,15 @@
 
         if (!liff.isInClient()) {
           statusElement.textContent =
-            "目前不是在 LINE 內建瀏覽器中開啟。\n" +
-            "從 LINE 聊天室開啟";
+            "目前不是在 LINE 內建瀏覽器中開啟\n" +
+            "從 LINE 聊天室開啟此連結，再試一次";
 
           return;
         }
 
         statusElement.textContent =
           "初始化完成。\n" +
-          "按下方按鈕";
+          "請確認目前聊天室。";
 
         sendButton.disabled = false;
 
@@ -147,6 +149,7 @@
         }
 
         const confirmed = window.confirm(
+          "要將以下訊息傳送到目前聊天室嗎？\n\n" +
           "取消\n\n" +
           MESSAGE
         );
@@ -166,7 +169,7 @@
         ]);
 
         statusElement.textContent =
-          "LINE 已回報傳送成功。";
+          "傳送成功";
 
       } catch (error) {
         console.error(error);
@@ -174,7 +177,7 @@
         statusElement.textContent =
           "傳送失敗：\n" +
           (error.message || String(error)) +
-          "\n\n檢查權限開啟方式及執行環境。";
+          "\n\n檢查權限、開啟方式及執行環境";
 
       } finally {
         sending = false;
