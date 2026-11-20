@@ -76,7 +76,7 @@
     <p id="status">正在初始化 LINE LIFF……</p>
 
     <button id="sendButton" disabled>
-      確認並傳送
+      取消傳送
     </button>
 
     <p class="note">
@@ -113,7 +113,7 @@
         if (!liff.isInClient()) {
           statusElement.textContent =
             "目前不是在 LINE 內建瀏覽器中開啟。\n" +
-            "從 LINE 聊天室開啟此連結，再試一次。";
+            "從 LINE 聊天室開啟";
 
           return;
         }
@@ -122,7 +122,7 @@
           "初始化完成。\n" +
           "請確認目前聊天室，再按下方按鈕。";
 
-        sendButton.disabled = false;
+        sendButton.disabled = true;
 
       } catch (error) {
         statusElement.textContent =
