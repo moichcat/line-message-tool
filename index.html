@@ -119,8 +119,9 @@
         statusElement.textContent =
           "初始化完成。\n" +
           "按下方按鈕";
+        sending = true;
 
-        sendButton.disabled = true;
+        sendButton.disabled = false;
 
       } catch (error) {
         statusElement.textContent =
