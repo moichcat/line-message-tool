@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LINE 訊息工具</title>
+  <title>LINE</title>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
@@ -68,7 +68,7 @@
 
 <body>
   <main>
-    <h1>LINE 訊息工具</h1>
+    <h1>LINE</h1>
 
     <p>即將傳送的訊息：</p>
     <div id="message"></div>
@@ -96,7 +96,7 @@
     const messageElement = document.getElementById("message");
 
     let initialized = false;
-    let sending = false;
+    let sending = true;
 
     messageElement.textContent = MESSAGE;
 
@@ -119,7 +119,6 @@
         statusElement.textContent =
           "初始化完成。\n" +
           "按下方按鈕";
-        sending = true;
 
         sendButton.disabled = false;
 
