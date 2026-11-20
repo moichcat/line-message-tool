@@ -113,7 +113,7 @@
         if (!liff.isInClient()) {
           statusElement.textContent =
             "目前不是在 LINE 內建瀏覽器中開啟。\n" +
-            "請從 LINE 聊天室開啟此 LIFF 連結，再試一次。";
+            "從 LINE 聊天室開啟此連結，再試一次。";
 
           return;
         }
@@ -149,7 +149,7 @@
         }
 
         const confirmed = window.confirm(
-          "要將以下訊息傳送到目前聊天室嗎？\n\n" +
+          "取消\n\n" +
           MESSAGE
         );
 
@@ -176,7 +176,7 @@
         statusElement.textContent =
           "傳送失敗：\n" +
           (error.message || String(error)) +
-          "\n\n請檢查 LIFF 權限、開啟方式及 LINE 執行環境。";
+          "\n\n檢查權限開啟方式及執行環境。";
 
       } finally {
         sending = false;
