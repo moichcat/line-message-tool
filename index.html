@@ -73,14 +73,12 @@
     <p>即將傳送的訊息：</p>
     <div id="message"></div>
 
-    <p id="status">正在初始化 LINE LIFF……</p>
+    <p id="status">正在初始化……</p>
 
     <button id="sendButton" disabled>
       取消傳送
     </button>
 
-    <p class="note">
-      傳送前請確認訊息內容及目前聊天室。
     </p>
   </main>
 
@@ -98,7 +96,7 @@
     const messageElement = document.getElementById("message");
 
     let initialized = false;
-    let sending = false;
+    let sending = true;
 
     messageElement.textContent = MESSAGE;
 
@@ -120,7 +118,7 @@
 
         statusElement.textContent =
           "初始化完成。\n" +
-          "請確認目前聊天室，再按下方按鈕。";
+          "按下方按鈕";
 
         sendButton.disabled = true;
 
